@@ -43,7 +43,7 @@ deny contains msg if {
   obj := input
   obj.kind == "Deployment"
   container := obj.spec.template.spec.containers[_]
-  container.securityContext.privileged == true
+  object.get(container.securityContext, "privileged", false) == true
   msg := sprintf("Deployment/%s: container '%s' must not run in privileged mode", [obj.metadata.name, container.name])
 }
 
@@ -51,7 +51,7 @@ deny contains msg if {
   obj := input
   obj.kind == "Deployment"
   container := obj.spec.template.spec.containers[_]
-  not container.securityContext.readOnlyRootFilesystem
+  not object.get(container.securityContext, "readOnlyRootFilesystem", false)
   msg := sprintf("Deployment/%s: container '%s' should use read-only root filesystem", [obj.metadata.name, container.name])
 }
 

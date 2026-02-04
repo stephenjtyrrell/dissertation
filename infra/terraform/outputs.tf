@@ -25,10 +25,10 @@ output "subnet_id" {
 
 output "region" {
   description = "The region where resources were deployed"
-  value = try(
-    var.cloud == "aws" ? var.aws_region : null,
-    var.cloud == "azure" ? var.azure_location : null,
-    var.cloud == "gcp" ? var.gcp_region : null,
+  value = (
+    var.cloud == "aws"   ? var.aws_region :
+    var.cloud == "azure" ? var.azure_location :
+    var.cloud == "gcp"   ? var.gcp_region :
     null
   )
 }

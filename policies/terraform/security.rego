@@ -44,13 +44,13 @@ deny contains msg if {
   after := rc.change.after
   
   # Look for a corresponding flow log resource
-  # vpc_id in flow log can be either a direct reference like "aws_vpc.example.id" 
-  # or an actual VPC ID. We check if the flow log's vpc_id contains the VPC resource address.
+  # vpc_id in flow log will be a Terraform reference like "aws_vpc.example.id" for resources
+  # created in the same plan. We check if vpc_id starts with the VPC resource address.
   flow_log_exists := [log | 
     some log in input.resource_changes
     log.type == "aws_flow_log"
     vpc_id := log.change.after.vpc_id
-    # Check if vpc_id references this VPC (e.g., "aws_vpc.example.id" contains "aws_vpc.example")
+    # Check if vpc_id references this VPC (e.g., "aws_vpc.example.id" starts with "aws_vpc.example.")
     startswith(vpc_id, concat("", [rc.address, "."]))
   ]
   count(flow_log_exists) == 0

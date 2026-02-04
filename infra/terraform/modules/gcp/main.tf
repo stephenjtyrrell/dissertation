@@ -10,6 +10,9 @@ resource "google_compute_subnetwork" "this" {
   network       = google_compute_network.this.id
 }
 
+# Note: GCP networks don't support labels directly
+# Labels are applied at the project or resource level for supported resources
+
 output "network_id" {
   value = google_compute_network.this.id
 }

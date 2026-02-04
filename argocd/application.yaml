@@ -3,10 +3,14 @@ kind: Application
 metadata:
   name: dissertation-sample-api
   namespace: argocd
+  annotations:
+    # Link to source code and documentation
+    app.kubernetes.io/documentation: "https://github.com/YOUR_USERNAME/dissertation"
 spec:
   project: default
   source:
-    repoURL: https://github.com/REPLACE_ME/dissertation
+    # Update this to your actual repository URL
+    repoURL: https://github.com/YOUR_USERNAME/dissertation
     targetRevision: HEAD
     path: k8s/app
   destination:
@@ -18,3 +22,9 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m

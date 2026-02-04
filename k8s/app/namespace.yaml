@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dissertation
+  labels:
+    app.kubernetes.io/part-of: dissertation-platform
+    owner: platform-team
+    compliance: baseline

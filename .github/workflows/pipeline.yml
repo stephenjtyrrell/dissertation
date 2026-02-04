@@ -5,9 +5,18 @@ on:
   push:
     branches: ["main"]
 
+env:
+  TERRAFORM_VERSION: 1.8.5
+  OPA_VERSION: latest
+  CONFTEST_VERSION: 0.56.0
+
 jobs:
   terraform-and-policy-checks:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        cloud: [aws, azure, gcp]
+      fail-fast: false
 
     steps:
       - name: Checkout
@@ -16,7 +25,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.8.5
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
 
       - name: Terraform format check
         run: terraform fmt -check -recursive infra/terraform
@@ -27,20 +36,37 @@ jobs:
       - name: Terraform validate
         run: terraform -chdir=infra/terraform validate
 
+      - name: Terraform plan for ${{ matrix.cloud }}
+        run: |
+          terraform -chdir=infra/terraform plan -var="cloud=${{ matrix.cloud }}" -out=tfplan-${{ matrix.cloud }}
+          terraform -chdir=infra/terraform show -json tfplan-${{ matrix.cloud }} > infra/terraform/tfplan-${{ matrix.cloud }}.json
+
       - name: Install OPA
         run: |
-          curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64_static
+          curl -L -o opa https://openpolicyagent.org/downloads/${{ env.OPA_VERSION }}/opa_linux_amd64_static
           chmod +x opa
           sudo mv opa /usr/local/bin/opa
 
       - name: Evaluate Terraform policy pack (sample plan)
         run: opa eval --fail-defined --format pretty --data policies/terraform --input policies/terraform/sample-tfplan.json "data.terraform.deny"
 
+      - name: Evaluate Terraform policy pack (${{ matrix.cloud }} plan)
+        run: opa eval --fail-defined --format pretty --data policies/terraform --input infra/terraform/tfplan-${{ matrix.cloud }}.json "data.terraform.deny"
+        continue-on-error: true
+
       - name: Install Conftest
         run: |
-          curl -L https://github.com/open-policy-agent/conftest/releases/download/v0.56.0/conftest_0.56.0_Linux_x86_64.tar.gz -o conftest.tar.gz
+          curl -L https://github.com/open-policy-agent/conftest/releases/download/v${{ env.CONFTEST_VERSION }}/conftest_${{ env.CONFTEST_VERSION }}_Linux_x86_64.tar.gz -o conftest.tar.gz
           tar -xzf conftest.tar.gz
           sudo mv conftest /usr/local/bin/conftest
 
       - name: Evaluate Kubernetes policy pack
         run: conftest test k8s/app -p policies/kubernetes
+
+      - name: Upload Terraform plan artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: terraform-plan-${{ matrix.cloud }}
+          path: infra/terraform/tfplan-${{ matrix.cloud }}.json
+          retention-days: 30

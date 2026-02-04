@@ -52,7 +52,6 @@ jobs:
 
       - name: Evaluate Terraform policy pack (${{ matrix.cloud }} plan)
         run: opa eval --fail-defined --format pretty --data policies/terraform --input infra/terraform/tfplan-${{ matrix.cloud }}.json "data.terraform.deny"
-        continue-on-error: true
 
       - name: Install Conftest
         run: |

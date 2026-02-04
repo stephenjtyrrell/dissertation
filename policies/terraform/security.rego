@@ -69,6 +69,6 @@ deny contains msg if {
   after := rc.change.after
   "0.0.0.0/0" in after.source_ranges
   after.direction == "INGRESS"
-  after.allow
+  count(after.allow) > 0
   msg := sprintf("%s should not allow unrestricted ingress from 0.0.0.0/0", [rc.address])
 }

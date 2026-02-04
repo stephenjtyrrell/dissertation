@@ -1,0 +1,46 @@
+name: vendor-agnostic-multicloud-pipeline
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+
+jobs:
+  terraform-and-policy-checks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8.5
+
+      - name: Terraform format check
+        run: terraform fmt -check -recursive infra/terraform
+
+      - name: Terraform init
+        run: terraform -chdir=infra/terraform init -backend=false
+
+      - name: Terraform validate
+        run: terraform -chdir=infra/terraform validate
+
+      - name: Install OPA
+        run: |
+          curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64_static
+          chmod +x opa
+          sudo mv opa /usr/local/bin/opa
+
+      - name: Evaluate Terraform policy pack (sample plan)
+        run: opa eval --fail-defined --format pretty --data policies/terraform --input policies/terraform/sample-tfplan.json "data.terraform.deny"
+
+      - name: Install Conftest
+        run: |
+          curl -L https://github.com/open-policy-agent/conftest/releases/download/v0.56.0/conftest_0.56.0_Linux_x86_64.tar.gz -o conftest.tar.gz
+          tar -xzf conftest.tar.gz
+          sudo mv conftest /usr/local/bin/conftest
+
+      - name: Evaluate Kubernetes policy pack
+        run: conftest test k8s/app -p policies/kubernetes

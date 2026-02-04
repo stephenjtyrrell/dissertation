@@ -68,6 +68,7 @@ deny contains msg if {
   rc.type == "google_compute_firewall"
   after := rc.change.after
   "0.0.0.0/0" in after.source_ranges
-  "allow" in after.direction
+  after.direction == "INGRESS"
+  after.allow
   msg := sprintf("%s should not allow unrestricted ingress from 0.0.0.0/0", [rc.address])
 }

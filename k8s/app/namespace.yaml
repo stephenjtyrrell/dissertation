@@ -4,5 +4,6 @@ metadata:
   name: dissertation
   labels:
     app.kubernetes.io/part-of: dissertation-platform
+    app.kubernetes.io/name: dissertation
     owner: platform-team
     compliance: baseline

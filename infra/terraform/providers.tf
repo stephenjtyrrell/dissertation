@@ -16,7 +16,7 @@ provider "azurerm" {
 
   use_cli                    = local.azure_enabled
   skip_provider_registration = !local.azure_enabled
-  
+
   # Disable all authentication methods when not using Azure
   use_msi  = false
   use_oidc = false

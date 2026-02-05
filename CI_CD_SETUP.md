@@ -34,6 +34,27 @@ ARM_SUBSCRIPTION_ID: your-subscription-id
 ARM_TENANT_ID: your-tenant-id
 ```
 
+To generate these values, create a service principal in Azure and capture the output:
+
+```bash
+az login
+az account show --query id -o tsv # subscription id
+az account show --query tenantId -o tsv # tenant id
+
+az ad sp create-for-rbac \
+  --name "dissertation-terraform" \
+  --role "Contributor" \
+  --scopes "/subscriptions/<subscription-id>" \
+  --sdk-auth
+```
+
+Map the service principal output to secrets:
+
+- `clientId` → `ARM_CLIENT_ID`
+- `clientSecret` → `ARM_CLIENT_SECRET`
+- `tenantId` → `ARM_TENANT_ID`
+- `subscriptionId` → `ARM_SUBSCRIPTION_ID` (from `az account show` above)
+
 #### For GCP Deployments
 
 ```

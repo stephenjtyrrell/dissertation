@@ -45,10 +45,22 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
 
+      - name: Configure GCP credentials
+        if: matrix.cloud == 'gcp'
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
       - name: Terraform plan for ${{ matrix.cloud }}
         run: |
           terraform -chdir=infra/terraform plan -var="cloud=${{ matrix.cloud }}" -out=tfplan-${{ matrix.cloud }}
           terraform -chdir=infra/terraform show -json tfplan-${{ matrix.cloud }} > infra/terraform/tfplan-${{ matrix.cloud }}.json
+        env:
+          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+          TF_VAR_gcp_project_id: ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Install OPA
         run: |

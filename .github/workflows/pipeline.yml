@@ -51,16 +51,27 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
+      - name: Create dummy GCP credentials for non-GCP runs
+        if: matrix.cloud != 'gcp'
+        run: |
+          mkdir -p $HOME/.config/gcloud
+          echo '{"type": "service_account", "project_id": "dummy-project"}' > $HOME/.config/gcloud/application_default_credentials.json
+
       - name: Terraform plan for ${{ matrix.cloud }}
         run: |
           terraform -chdir=infra/terraform plan -var="cloud=${{ matrix.cloud }}" -out=tfplan-${{ matrix.cloud }}
           terraform -chdir=infra/terraform show -json tfplan-${{ matrix.cloud }} > infra/terraform/tfplan-${{ matrix.cloud }}.json
         env:
-          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-          TF_VAR_gcp_project_id: ${{ secrets.GCP_PROJECT_ID }}
+          # AWS credentials (auto-configured by configure-aws-credentials action)
+          # Azure credentials - only set for Azure runs
+          ARM_CLIENT_ID: ${{ matrix.cloud == 'azure' && secrets.ARM_CLIENT_ID || '' }}
+          ARM_CLIENT_SECRET: ${{ matrix.cloud == 'azure' && secrets.ARM_CLIENT_SECRET || '' }}
+          ARM_SUBSCRIPTION_ID: ${{ matrix.cloud == 'azure' && secrets.ARM_SUBSCRIPTION_ID || '' }}
+          ARM_TENANT_ID: ${{ matrix.cloud == 'azure' && secrets.ARM_TENANT_ID || '' }}
+          # GCP credentials - provide project ID even for non-GCP runs to prevent provider errors
+          TF_VAR_gcp_project_id: ${{ secrets.GCP_PROJECT_ID || 'dummy-project-id' }}
+          # Disable GCP application default credentials when not using GCP
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ matrix.cloud == 'gcp' && format('{0}/gcp-key.json', runner.temp) || '' }}
 
       - name: Install OPA
         run: |

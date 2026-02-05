@@ -21,4 +21,8 @@ provider "azurerm" {
 provider "google" {
   project = var.gcp_project_id
   region  = var.gcp_region
+
+  # Skip validation when not using GCP
+  user_project_override = local.gcp_enabled
+  request_timeout       = local.gcp_enabled ? "60s" : "1s"
 }

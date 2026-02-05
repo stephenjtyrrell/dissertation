@@ -51,29 +51,15 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      - name: Terraform plan for AWS
-        if: matrix.cloud == 'aws'
+      - name: Terraform plan for ${{ matrix.cloud }}
         run: |
-          terraform -chdir=infra/terraform plan -var="cloud=aws" -out=tfplan-aws
-          terraform -chdir=infra/terraform show -json tfplan-aws > infra/terraform/tfplan-aws.json
-
-      - name: Terraform plan for Azure
-        if: matrix.cloud == 'azure'
-        run: |
-          terraform -chdir=infra/terraform plan -var="cloud=azure" -out=tfplan-azure
-          terraform -chdir=infra/terraform show -json tfplan-azure > infra/terraform/tfplan-azure.json
+          terraform -chdir=infra/terraform plan -var="cloud=${{ matrix.cloud }}" -out=tfplan-${{ matrix.cloud }}
+          terraform -chdir=infra/terraform show -json tfplan-${{ matrix.cloud }} > infra/terraform/tfplan-${{ matrix.cloud }}.json
         env:
           ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
           ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-
-      - name: Terraform plan for GCP
-        if: matrix.cloud == 'gcp'
-        run: |
-          terraform -chdir=infra/terraform plan -var="cloud=gcp" -out=tfplan-gcp
-          terraform -chdir=infra/terraform show -json tfplan-gcp > infra/terraform/tfplan-gcp.json
-        env:
           TF_VAR_gcp_project_id: ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Install OPA

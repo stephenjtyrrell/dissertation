@@ -34,6 +34,45 @@ ARM_SUBSCRIPTION_ID: your-subscription-id
 ARM_TENANT_ID: your-tenant-id
 ```
 
+To generate these values, create a service principal in Azure and capture the output:
+
+```bash
+az login
+az account show --query id -o tsv # subscription id
+az account show --query tenantId -o tsv # tenant id
+
+az ad sp create-for-rbac \
+  --name "dissertation-terraform" \
+  --role "Contributor" \
+  --scopes "/subscriptions/<subscription-id>" \
+  --sdk-auth
+```
+
+Map the service principal output to secrets:
+
+- `clientId` → `ARM_CLIENT_ID`
+- `clientSecret` → `ARM_CLIENT_SECRET`
+- `tenantId` → `ARM_TENANT_ID`
+- `subscriptionId` → `ARM_SUBSCRIPTION_ID` (from `az account show` above)
+
+**Troubleshooting 403 AuthorizationFailed**
+
+If you see an error like `AuthorizationFailed` for `Microsoft.Resources/subscriptions/providers/read`, the service principal likely lacks permissions at the subscription scope or the scope is incorrect. Ensure the role assignment exists at the subscription level:
+
+```bash
+az role assignment create \
+  --assignee "<client-id>" \
+  --role "Contributor" \
+  --scope "/subscriptions/<subscription-id>"
+
+az role assignment list \
+  --assignee "<client-id>" \
+  --scope "/subscriptions/<subscription-id>" \
+  --output table
+```
+
+If you just granted access, re-run `az login` and re-export the secrets to refresh credentials.
+
 #### For GCP Deployments
 
 ```

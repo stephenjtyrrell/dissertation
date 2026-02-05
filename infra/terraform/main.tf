@@ -12,6 +12,7 @@ module "aws" {
   count  = var.cloud == "aws" ? 1 : 0
 
   name_prefix       = local.resource_prefix
+  aws_region        = var.aws_region
   cidr_block        = var.cidr_block
   subnet_cidr_block = var.subnet_cidr_block
   tags              = local.common_tags
@@ -33,7 +34,9 @@ module "gcp" {
   count  = var.cloud == "gcp" ? 1 : 0
 
   name_prefix       = local.resource_prefix
+  gcp_project_id    = var.gcp_project_id
   region            = var.gcp_region
+  gcp_region        = var.gcp_region
   cidr_block        = var.cidr_block
   subnet_cidr_block = var.subnet_cidr_block
   labels            = local.common_tags

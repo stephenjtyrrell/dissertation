@@ -17,3 +17,8 @@ variable "tags" {
   description = "Tags to apply to all resources"
   type        = map(string)
 }
+
+variable "aws_region" {
+  description = "AWS region"
+  type        = string
+}

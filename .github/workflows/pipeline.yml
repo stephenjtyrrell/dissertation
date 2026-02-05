@@ -74,12 +74,8 @@ jobs:
           chmod +x opa
           sudo mv opa /usr/local/bin/opa
 
-      - name: Evaluate Terraform policy pack (sample plan)
-        run: opa eval --fail-defined --format pretty --data policies/terraform --input policies/terraform/sample-tfplan.json "data.terraform.deny"
-
       - name: Evaluate Terraform policy pack (${{ matrix.cloud }} plan)
         run: opa eval --fail-defined --format pretty --data policies/terraform --input infra/terraform/${{ matrix.cloud }}/tfplan-${{ matrix.cloud }}.json "data.terraform.deny"
-        continue-on-error: true
 
       - name: Install Conftest
         run: |

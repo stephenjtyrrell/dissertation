@@ -3,8 +3,30 @@
     {
       "address": "aws_vpc.example",
       "type": "aws_vpc",
+      "mode": "managed",
       "change": {
+        "actions": ["create"],
         "after": {
+          "tags": {
+            "owner": "platform-team",
+            "cost_center": "cc-001",
+            "compliance": "baseline",
+            "project": "dissertation-pipeline",
+            "environment": "dev",
+            "managed_by": "terraform"
+          }
+        }
+      }
+    },
+    {
+      "address": "aws_flow_log.example",
+      "type": "aws_flow_log",
+      "mode": "managed",
+      "change": {
+        "actions": ["create"],
+        "after": {
+          "vpc_id": "aws_vpc.example",
+          "traffic_type": "ALL",
           "tags": {
             "owner": "platform-team",
             "cost_center": "cc-001",

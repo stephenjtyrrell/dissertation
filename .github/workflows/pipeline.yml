@@ -36,6 +36,15 @@ jobs:
       - name: Terraform validate
         run: terraform -chdir=infra/terraform validate
 
+      - name: Configure AWS credentials
+        if: matrix.cloud == 'aws'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
+
       - name: Terraform plan for ${{ matrix.cloud }}
         run: |
           terraform -chdir=infra/terraform plan -var="cloud=${{ matrix.cloud }}" -out=tfplan-${{ matrix.cloud }}

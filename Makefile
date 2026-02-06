@@ -37,5 +37,6 @@ policy-k8s: ## Evaluate Kubernetes policies
 	conftest test k8s/app -p $(POLICY_K8S_DIR)
 
 clean: ## Clean generated files
-	rm -f $(TF_DIR)/*.tfplan $(TF_DIR)/*.tfplan.json $(TF_DIR)/.terraform.lock.hcl
-	rm -rf $(TF_DIR)/.terraform
+	rm -f $(TF_DIR)/aws/*.tfplan $(TF_DIR)/aws/tfplan*.json $(TF_DIR)/azure/*.tfplan $(TF_DIR)/azure/tfplan*.json $(TF_DIR)/gcp/*.tfplan $(TF_DIR)/gcp/tfplan*.json
+	rm -rf $(TF_DIR)/aws/.terraform $(TF_DIR)/azure/.terraform $(TF_DIR)/gcp/.terraform
+	rm -f $(TF_DIR)/aws/.terraform.lock.hcl $(TF_DIR)/azure/.terraform.lock.hcl $(TF_DIR)/gcp/.terraform.lock.hcl

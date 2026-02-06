@@ -6,7 +6,6 @@ This module creates basic networking infrastructure in Google Cloud Platform.
 
 - VPC Network (custom mode, no auto-created subnets)
 - Subnet with specified CIDR range
-- Note: GCP networks don't support labels directly; labels are applied at project or resource level for supported resources
 
 ## Usage
 

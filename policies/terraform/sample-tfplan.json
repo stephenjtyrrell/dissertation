@@ -1,7 +1,7 @@
 {
   "resource_changes": [
     {
-      "address": "aws_vpc.example",
+      "address": "module.aws.aws_vpc.this",
       "type": "aws_vpc",
       "mode": "managed",
       "change": {
@@ -19,13 +19,12 @@
       }
     },
     {
-      "address": "aws_flow_log.example",
+      "address": "module.aws.aws_flow_log.this",
       "type": "aws_flow_log",
       "mode": "managed",
       "change": {
         "actions": ["create"],
         "after": {
-          "vpc_id": "aws_vpc.example",
           "traffic_type": "ALL",
           "tags": {
             "owner": "platform-team",

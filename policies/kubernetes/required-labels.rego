@@ -2,7 +2,7 @@ package kubernetes
 
 required_labels := {"app.kubernetes.io/name", "app.kubernetes.io/part-of", "owner", "compliance"}
 
-deny contains msg if {
+deny[msg] {
   obj := input
   kind := object.get(obj, "kind", "")
   kind != ""
@@ -14,7 +14,7 @@ deny contains msg if {
 }
 
 # Check for resource limits on containers
-deny contains msg if {
+deny[msg] {
   obj := input
   obj.kind == "Deployment"
   container := obj.spec.template.spec.containers[_]
@@ -22,7 +22,7 @@ deny contains msg if {
   msg := sprintf("Deployment/%s: container '%s' must define resource limits", [obj.metadata.name, container.name])
 }
 
-deny contains msg if {
+deny[msg] {
   obj := input
   obj.kind == "Deployment"
   container := obj.spec.template.spec.containers[_]
@@ -31,7 +31,7 @@ deny contains msg if {
 }
 
 # Check for security context
-deny contains msg if {
+deny[msg] {
   obj := input
   obj.kind == "Deployment"
   container := obj.spec.template.spec.containers[_]
@@ -39,7 +39,7 @@ deny contains msg if {
   msg := sprintf("Deployment/%s: container '%s' must define securityContext", [obj.metadata.name, container.name])
 }
 
-deny contains msg if {
+deny[msg] {
   obj := input
   obj.kind == "Deployment"
   container := obj.spec.template.spec.containers[_]
@@ -47,7 +47,7 @@ deny contains msg if {
   msg := sprintf("Deployment/%s: container '%s' must not run in privileged mode", [obj.metadata.name, container.name])
 }
 
-deny contains msg if {
+deny[msg] {
   obj := input
   obj.kind == "Deployment"
   container := obj.spec.template.spec.containers[_]
@@ -58,7 +58,7 @@ deny contains msg if {
 }
 
 # Check for liveness and readiness probes
-deny contains msg if {
+deny[msg] {
   obj := input
   obj.kind == "Deployment"
   container := obj.spec.template.spec.containers[_]
@@ -66,7 +66,7 @@ deny contains msg if {
   msg := sprintf("Deployment/%s: container '%s' should define a livenessProbe", [obj.metadata.name, container.name])
 }
 
-deny contains msg if {
+deny[msg] {
   obj := input
   obj.kind == "Deployment"
   container := obj.spec.template.spec.containers[_]

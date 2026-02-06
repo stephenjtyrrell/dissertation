@@ -14,5 +14,4 @@ module "gcp" {
   region            = var.gcp_region
   cidr_block        = var.cidr_block
   subnet_cidr_block = var.subnet_cidr_block
-  labels            = local.common_tags
 }

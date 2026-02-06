@@ -17,8 +17,3 @@ variable "subnet_cidr_block" {
   description = "Subnet CIDR block"
   type        = string
 }
-
-variable "labels" {
-  description = "Labels to apply to all resources"
-  type        = map(string)
-}

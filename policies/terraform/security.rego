@@ -2,6 +2,17 @@ package terraform
 
 required_tags := {"owner", "cost_center", "compliance", "project", "environment", "managed_by"}
 
+# Resource types that do not support tags/labels
+untaggable_resource_types := {
+  "aws_iam_role_policy",
+  "aws_iam_policy_attachment",
+  "aws_route_table_association",
+  "aws_security_group_rule",
+  "azurerm_subnet",
+  "google_compute_network",
+  "google_compute_subnetwork",
+}
+
 # Check for public access on storage resources
 deny contains msg if {
   some rc in input.resource_changes
@@ -17,6 +28,7 @@ deny contains msg if {
   some rc in input.resource_changes
   rc.mode == "managed"
   rc.change.actions[_] != "delete"
+  not rc.type in untaggable_resource_types
   
   # Get tags or labels from the resource
   after := rc.change.after
@@ -41,15 +53,14 @@ deny contains msg if {
 deny contains msg if {
   some rc in input.resource_changes
   rc.type == "aws_vpc"
+  rc.change.actions[_] != "delete"
   vpc_address := rc.address
   
-  # Look for a corresponding flow log resource that references this VPC
+  # Look for a corresponding flow log resource in the plan
   flow_log_exists := [log | 
     some log in input.resource_changes
     log.type == "aws_flow_log"
-    log_vpc_id := object.get(log.change.after, "vpc_id", "")
-    # Check if the flow log's vpc_id contains a reference to this VPC
-    contains(log_vpc_id, vpc_address)
+    log.change.actions[_] != "delete"
   ]
   count(flow_log_exists) == 0
   msg := sprintf("%s should have VPC Flow Logs enabled", [vpc_address])

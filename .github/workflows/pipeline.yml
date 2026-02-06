@@ -75,10 +75,26 @@ jobs:
           sudo mv opa /usr/local/bin/opa
 
       - name: Evaluate Terraform policy pack (sample plan)
-        run: opa eval --fail-defined --format pretty --data policies/terraform --input policies/terraform/sample-tfplan.json "data.terraform.deny"
+        run: |
+          RESULT=$(opa eval --format json --data policies/terraform --input policies/terraform/sample-tfplan.json "data.terraform.deny")
+          VIOLATIONS=$(echo "$RESULT" | jq -r '.result[0].expressions[0].value | length')
+          echo "$RESULT" | jq '.result[0].expressions[0].value'
+          if [ "$VIOLATIONS" -gt 0 ]; then
+            echo "::error::Policy violations found in sample plan"
+            exit 1
+          fi
+          echo "No policy violations found."
 
       - name: Evaluate Terraform policy pack (${{ matrix.cloud }} plan)
-        run: opa eval --fail-defined --format pretty --data policies/terraform --input infra/terraform/${{ matrix.cloud }}/tfplan-${{ matrix.cloud }}.json "data.terraform.deny"
+        run: |
+          RESULT=$(opa eval --format json --data policies/terraform --input infra/terraform/${{ matrix.cloud }}/tfplan-${{ matrix.cloud }}.json "data.terraform.deny")
+          VIOLATIONS=$(echo "$RESULT" | jq -r '.result[0].expressions[0].value | length')
+          echo "$RESULT" | jq '.result[0].expressions[0].value'
+          if [ "$VIOLATIONS" -gt 0 ]; then
+            echo "::error::Policy violations found in ${{ matrix.cloud }} plan"
+            exit 1
+          fi
+          echo "No policy violations found."
         continue-on-error: false
 
       - name: Install Conftest

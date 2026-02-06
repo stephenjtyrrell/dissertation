@@ -14,7 +14,7 @@ untaggable_resource_types := {
 }
 
 # Check for public access on storage resources
-deny contains msg if {
+deny[msg] {
   some rc in input.resource_changes
   rc.type in {"aws_s3_bucket", "azurerm_storage_account", "google_storage_bucket"}
   after := rc.change.after
@@ -24,7 +24,7 @@ deny contains msg if {
 }
 
 # Check for required tags/labels on all resources
-deny contains msg if {
+deny[msg] {
   some rc in input.resource_changes
   rc.mode == "managed"
   rc.change.actions[_] != "delete"
@@ -41,7 +41,7 @@ deny contains msg if {
 }
 
 # Ensure encryption is enabled for storage
-deny contains msg if {
+deny[msg] {
   some rc in input.resource_changes
   rc.type == "aws_s3_bucket"
   after := rc.change.after
@@ -50,7 +50,7 @@ deny contains msg if {
 }
 
 # Check VPC flow logs are enabled
-deny contains msg if {
+deny[msg] {
   some rc in input.resource_changes
   rc.type == "aws_vpc"
   rc.change.actions[_] != "delete"
@@ -67,7 +67,7 @@ deny contains msg if {
 }
 
 # Ensure Azure storage uses HTTPS only
-deny contains msg if {
+deny[msg] {
   some rc in input.resource_changes
   rc.type == "azurerm_storage_account"
   after := rc.change.after
@@ -76,7 +76,7 @@ deny contains msg if {
 }
 
 # Check for default network exposure in GCP
-deny contains msg if {
+deny[msg] {
   some rc in input.resource_changes
   rc.type == "google_compute_firewall"
   after := rc.change.after

@@ -61,6 +61,8 @@ deny contains msg if {
     some log in input.resource_changes
     log.type == "aws_flow_log"
     log.change.actions[_] != "delete"
+    after_log := log.change.after
+    object.get(after_log, "vpc_id", "") == vpc_address
   ]
   count(flow_log_exists) == 0
   msg := sprintf("%s should have VPC Flow Logs enabled", [vpc_address])

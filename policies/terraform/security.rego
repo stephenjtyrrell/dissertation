@@ -55,14 +55,18 @@ deny contains msg if {
   rc.type == "aws_vpc"
   rc.change.actions[_] != "delete"
   vpc_address := rc.address
-  
-  # Look for a corresponding flow log resource in the plan
-  flow_log_exists := [log | 
+
+  # Derive the module prefix from the VPC address (e.g. "module.aws." from "module.aws.aws_vpc.this")
+  # For root-level resources the prefix will be empty
+  parts := split(vpc_address, ".")
+  prefix := concat(".", array.slice(parts, 0, count(parts) - 2))
+
+  # Look for any aws_flow_log within the same module scope
+  flow_log_exists := [log |
     some log in input.resource_changes
     log.type == "aws_flow_log"
     log.change.actions[_] != "delete"
-    after_log := log.change.after
-    object.get(after_log, "vpc_id", "") == vpc_address
+    startswith(log.address, prefix)
   ]
   count(flow_log_exists) == 0
   msg := sprintf("%s should have VPC Flow Logs enabled", [vpc_address])

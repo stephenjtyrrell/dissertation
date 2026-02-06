@@ -6,7 +6,6 @@ This module creates basic networking infrastructure in Google Cloud Platform.
 
 - VPC Network (custom mode, no auto-created subnets)
 - Subnet with specified CIDR range
-- Note: GCP networks don't support labels directly; labels are applied at project or resource level for supported resources
 
 ## Usage
 
@@ -18,11 +17,6 @@ module "gcp" {
   region            = "us-central1"
   cidr_block        = "10.42.0.0/16"
   subnet_cidr_block = "10.42.1.0/24"
-  labels = {
-    owner       = "platform-team"
-    cost_center = "cc-001"
-    compliance  = "baseline"
-  }
 }
 ```
 
@@ -34,7 +28,6 @@ module "gcp" {
 | region | GCP region | string | yes |
 | cidr_block | VPC CIDR block (not used in GCP but kept for consistency) | string | yes |
 | subnet_cidr_block | Subnet CIDR block | string | yes |
-| labels | Labels to apply to all resources | map(string) | yes |
 
 ## Outputs
 

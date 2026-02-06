@@ -12,23 +12,23 @@ help: ## Display this help message
 all: tf-init tf-fmt tf-validate tf-plan policy-tf policy-k8s ## Run all checks
 
 tf-init: ## Initialize Terraform
-	terraform -chdir=$(TF_DIR) init
+	terraform -chdir=$(TF_DIR)/$(CLOUD) init
 
 tf-fmt: ## Format Terraform code
 	terraform -chdir=$(TF_DIR) fmt -recursive
 
 tf-validate: ## Validate Terraform configuration
-	terraform -chdir=$(TF_DIR) validate
+	terraform -chdir=$(TF_DIR)/$(CLOUD) validate
 
 tf-plan: ## Generate Terraform plan (use CLOUD=aws|azure|gcp)
-	terraform -chdir=$(TF_DIR) plan -var="cloud=$(CLOUD)" -out=tfplan
-	terraform -chdir=$(TF_DIR) show -json tfplan > $(TF_DIR)/tfplan.json
+	terraform -chdir=$(TF_DIR)/$(CLOUD) plan -out=tfplan
+	terraform -chdir=$(TF_DIR)/$(CLOUD) show -json tfplan > $(TF_DIR)/$(CLOUD)/tfplan.json
 
 tf-apply: ## Apply Terraform changes (use CLOUD=aws|azure|gcp)
-	terraform -chdir=$(TF_DIR) apply -var="cloud=$(CLOUD)"
+	terraform -chdir=$(TF_DIR)/$(CLOUD) apply
 
 tf-destroy: ## Destroy Terraform resources (use CLOUD=aws|azure|gcp)
-	terraform -chdir=$(TF_DIR) destroy -var="cloud=$(CLOUD)"
+	terraform -chdir=$(TF_DIR)/$(CLOUD) destroy
 
 policy-tf: ## Evaluate Terraform policies
 	opa eval --fail-defined --format pretty --data $(POLICY_TF_DIR) --input $(POLICY_TF_DIR)/sample-tfplan.json "data.terraform.deny"

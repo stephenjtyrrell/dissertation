@@ -8,10 +8,13 @@ resource "google_compute_subnetwork" "this" {
   ip_cidr_range = var.subnet_cidr_block
   region        = var.region
   network       = google_compute_network.this.id
+  
+  # Apply labels to subnetwork (networks don't support labels)
+  labels = var.labels
 }
 
-# Note: GCP networks don't support labels directly
-# Labels are applied at the project or resource level for supported resources
+# Note: GCP networks don't support labels directly, but subnetworks do
+# Labels are applied to the subnetwork resource for governance compliance
 
 output "network_id" {
   value = google_compute_network.this.id

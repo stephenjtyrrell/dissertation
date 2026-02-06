@@ -11,7 +11,47 @@ updates:
 
   # Terraform
   - package-ecosystem: "terraform"
-    directory: "/infra/terraform"
+    directory: "/infra/terraform/aws"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "terraform"
+
+  - package-ecosystem: "terraform"
+    directory: "/infra/terraform/azure"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "terraform"
+
+  - package-ecosystem: "terraform"
+    directory: "/infra/terraform/gcp"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "terraform"
+
+  - package-ecosystem: "terraform"
+    directory: "/infra/terraform/modules/aws"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "terraform"
+
+  - package-ecosystem: "terraform"
+    directory: "/infra/terraform/modules/azure"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "terraform"
+
+  - package-ecosystem: "terraform"
+    directory: "/infra/terraform/modules/gcp"
     schedule:
       interval: "weekly"
     labels:

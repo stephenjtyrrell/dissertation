@@ -41,16 +41,18 @@ deny contains msg if {
 deny contains msg if {
   some rc in input.resource_changes
   rc.type == "aws_vpc"
-  after := rc.change.after
+  vpc_address := rc.address
   
-  # Look for a corresponding flow log resource
+  # Look for a corresponding flow log resource that references this VPC
   flow_log_exists := [log | 
     some log in input.resource_changes
     log.type == "aws_flow_log"
-    contains(log.change.after.vpc_id, rc.address)
+    log_vpc_id := object.get(log.change.after, "vpc_id", "")
+    # Check if the flow log's vpc_id contains a reference to this VPC
+    contains(log_vpc_id, vpc_address)
   ]
   count(flow_log_exists) == 0
-  msg := sprintf("%s should have VPC Flow Logs enabled", [rc.address])
+  msg := sprintf("%s should have VPC Flow Logs enabled", [vpc_address])
 }
 
 # Ensure Azure storage uses HTTPS only
@@ -67,7 +69,17 @@ deny contains msg if {
   some rc in input.resource_changes
   rc.type == "google_compute_firewall"
   after := rc.change.after
+  
+  # Check if source_ranges includes 0.0.0.0/0
   "0.0.0.0/0" in after.source_ranges
-  "allow" in after.direction
+  
+  # Check if direction is INGRESS (or not set, which defaults to INGRESS)
+  direction := object.get(after, "direction", "INGRESS")
+  direction == "INGRESS"
+  
+  # Check if there are any allow rules
+  allow_rules := object.get(after, "allow", [])
+  count(allow_rules) > 0
+  
   msg := sprintf("%s should not allow unrestricted ingress from 0.0.0.0/0", [rc.address])
 }

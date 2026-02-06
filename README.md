@@ -56,14 +56,15 @@ export GOOGLE_PROJECT="your-project-id"
 ### 2. Initialize and Deploy Infrastructure
 
 ```bash
-# Copy and customize terraform variables
-cp infra/terraform/terraform.tfvars.example infra/terraform/terraform.tfvars
+# Copy and customize terraform variables for your target cloud
+# For AWS:
+cp infra/terraform/terraform.tfvars.example infra/terraform/aws/terraform.tfvars
 
-# Initialize and validate
-cd infra/terraform
+# Initialize and validate (replace 'aws' with 'azure' or 'gcp' as needed)
+cd infra/terraform/aws
 terraform init
 terraform validate
-terraform plan -var="cloud=aws" -out=tfplan
+terraform plan -out=tfplan
 terraform show -json tfplan > tfplan.json
 ```
 
@@ -72,20 +73,20 @@ terraform show -json tfplan > tfplan.json
 **Terraform policies:**
 ```bash
 opa eval --fail-defined --format pretty \
-  --data ../../policies/terraform \
+  --data ../../../policies/terraform \
   --input tfplan.json \
   "data.terraform.deny"
 ```
 
 **Kubernetes policies:**
 ```bash
-conftest test ../../k8s/app -p ../../policies/kubernetes
+conftest test ../../../k8s/app -p ../../../policies/kubernetes
 ```
 
 ### 4. Apply Infrastructure (if policies pass)
 
 ```bash
-terraform apply -var="cloud=aws"
+terraform apply
 ```
 
 ## Using the Makefile
@@ -99,20 +100,20 @@ make help
 # Run all checks
 make all
 
-# Terraform operations
-make tf-init              # Initialize Terraform
-make tf-fmt               # Format Terraform code
-make tf-validate          # Validate configuration
-make tf-plan CLOUD=aws    # Generate plan for specific cloud
-make tf-apply CLOUD=azure # Apply changes
-make tf-destroy CLOUD=gcp # Destroy resources
+# Terraform operations (specify CLOUD=aws, azure, or gcp)
+make tf-init CLOUD=aws       # Initialize Terraform
+make tf-fmt                  # Format Terraform code
+make tf-validate CLOUD=aws   # Validate configuration
+make tf-plan CLOUD=aws       # Generate plan for specific cloud
+make tf-apply CLOUD=azure    # Apply changes
+make tf-destroy CLOUD=gcp    # Destroy resources
 
 # Policy evaluation
-make policy-tf            # Evaluate Terraform policies
-make policy-k8s           # Evaluate Kubernetes policies
+make policy-tf               # Evaluate Terraform policies
+make policy-k8s              # Evaluate Kubernetes policies
 
 # Cleanup
-make clean                # Remove generated files
+make clean                   # Remove generated files
 ```
 
 ## Project Structure
@@ -127,11 +128,9 @@ make clean                # Remove generated files
 │   └── application.yaml           # ArgoCD application manifest
 ├── infra/
 │   └── terraform/
-│       ├── main.tf                # Root module with cloud selection logic
-│       ├── variables.tf           # Input variables
-│       ├── outputs.tf             # Output values
-│       ├── providers.tf           # Provider configurations
-│       ├── versions.tf            # Version constraints
+│       ├── aws/                   # AWS-specific Terraform configuration
+│       ├── azure/                 # Azure-specific Terraform configuration
+│       ├── gcp/                   # GCP-specific Terraform configuration
 │       ├── terraform.tfvars.example  # Example variables file
 │       ├── backend.tf.example     # Backend configuration examples
 │       └── modules/

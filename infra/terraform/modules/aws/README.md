@@ -6,6 +6,9 @@ This module creates basic networking infrastructure in AWS.
 
 - VPC with DNS support and hostnames enabled
 - Subnet in the first availability zone
+- VPC Flow Logs for network traffic monitoring
+- CloudWatch Log Group for flow log storage
+- IAM role and policy for VPC Flow Logs
 - All resources tagged according to governance requirements
 
 ## Usage

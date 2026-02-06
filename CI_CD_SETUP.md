@@ -315,7 +315,7 @@ To automatically apply Terraform after validation (use with caution):
 ```yaml
 - name: Terraform Apply
   if: github.ref == 'refs/heads/main'
-  run: terraform -chdir=infra/terraform apply -auto-approve -var="cloud=${{ matrix.cloud }}"
+  run: terraform -chdir=infra/terraform/${{ matrix.cloud }} apply -auto-approve
 ```
 
 ### Slack Notifications

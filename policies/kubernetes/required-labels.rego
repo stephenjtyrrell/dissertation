@@ -51,7 +51,9 @@ deny contains msg if {
   obj := input
   obj.kind == "Deployment"
   container := obj.spec.template.spec.containers[_]
-  not container.securityContext.readOnlyRootFilesystem
+  sc := object.get(container, "securityContext", {})
+  readOnly := object.get(sc, "readOnlyRootFilesystem", false)
+  readOnly != true
   msg := sprintf("Deployment/%s: container '%s' should use read-only root filesystem", [obj.metadata.name, container.name])
 }
 

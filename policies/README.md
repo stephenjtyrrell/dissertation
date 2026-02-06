@@ -69,9 +69,9 @@ opa eval --fail-defined --format pretty \
   --input policies/terraform/sample-tfplan.json \
   "data.terraform.deny"
 
-# Test against real plan
-terraform -chdir=infra/terraform plan -var="cloud=aws" -out=tfplan
-terraform -chdir=infra/terraform show -json tfplan > tfplan.json
+# Test against real plan (example for AWS)
+terraform -chdir=infra/terraform/aws plan -out=tfplan
+terraform -chdir=infra/terraform/aws show -json tfplan > tfplan.json
 opa eval --fail-defined --format pretty \
   --data policies/terraform \
   --input tfplan.json \

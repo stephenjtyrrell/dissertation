@@ -76,20 +76,30 @@ This project implements a vendor-agnostic multi-cloud deployment pipeline with t
 **Purpose**: Provision cloud infrastructure in a vendor-agnostic manner
 
 **Components**:
-- **Root Module** (`infra/terraform/main.tf`): 
-  - Selects target cloud provider via variable
-  - Routes to appropriate provider module using conditional count
-  - Applies consistent naming and tagging
+- **AWS Root Configuration** (`infra/terraform/aws/`):
+  - Entry point for provisioning AWS infrastructure
+  - Uses AWS-specific modules and providers
+  - Applies consistent naming and tagging conventions
 
-- **Provider Modules** (`infra/terraform/modules/{aws,azure,gcp}/`):
+- **Azure Root Configuration** (`infra/terraform/azure/`):
+  - Entry point for provisioning Azure infrastructure
+  - Uses Azure-specific modules and providers
+  - Applies consistent naming and tagging conventions
+
+- **GCP Root Configuration** (`infra/terraform/gcp/`):
+  - Entry point for provisioning GCP infrastructure
+  - Uses GCP-specific modules and providers
+  - Applies consistent naming and tagging conventions
+
+- **Shared Modules** (`infra/terraform/modules/{aws,azure,gcp}/`):
   - Encapsulate cloud-specific resource creation
-  - Provide consistent interface across providers
-  - Handle provider-specific configurations
+  - Provide a consistent interface and patterns across providers
+  - Handle provider-specific configurations while reusing common logic
 
 **Benefits**:
-- Single codebase for multiple clouds
-- Easy to switch between providers
-- Consistent resource naming and tagging
+- Clear separation of concerns per cloud provider
+- Consistent patterns, naming, and tagging across all providers
+- Ability to evolve each cloud's configuration independently while reusing shared modules
 
 ### 2. Policy Layer (OPA/Rego)
 

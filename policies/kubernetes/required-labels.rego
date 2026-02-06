@@ -12,3 +12,64 @@ deny contains msg if {
   name := object.get(object.get(obj, "metadata", {}), "name", "unknown")
   msg := sprintf("%s/%s is missing required labels: %v", [kind, name, missing])
 }
+
+# Check for resource limits on containers
+deny contains msg if {
+  obj := input
+  obj.kind == "Deployment"
+  container := obj.spec.template.spec.containers[_]
+  not container.resources.limits
+  msg := sprintf("Deployment/%s: container '%s' must define resource limits", [obj.metadata.name, container.name])
+}
+
+deny contains msg if {
+  obj := input
+  obj.kind == "Deployment"
+  container := obj.spec.template.spec.containers[_]
+  not container.resources.requests
+  msg := sprintf("Deployment/%s: container '%s' must define resource requests", [obj.metadata.name, container.name])
+}
+
+# Check for security context
+deny contains msg if {
+  obj := input
+  obj.kind == "Deployment"
+  container := obj.spec.template.spec.containers[_]
+  not container.securityContext
+  msg := sprintf("Deployment/%s: container '%s' must define securityContext", [obj.metadata.name, container.name])
+}
+
+deny contains msg if {
+  obj := input
+  obj.kind == "Deployment"
+  container := obj.spec.template.spec.containers[_]
+  container.securityContext.privileged == true
+  msg := sprintf("Deployment/%s: container '%s' must not run in privileged mode", [obj.metadata.name, container.name])
+}
+
+deny contains msg if {
+  obj := input
+  obj.kind == "Deployment"
+  container := obj.spec.template.spec.containers[_]
+  sc := object.get(container, "securityContext", {})
+  readOnly := object.get(sc, "readOnlyRootFilesystem", false)
+  readOnly != true
+  msg := sprintf("Deployment/%s: container '%s' should use read-only root filesystem", [obj.metadata.name, container.name])
+}
+
+# Check for liveness and readiness probes
+deny contains msg if {
+  obj := input
+  obj.kind == "Deployment"
+  container := obj.spec.template.spec.containers[_]
+  not container.livenessProbe
+  msg := sprintf("Deployment/%s: container '%s' should define a livenessProbe", [obj.metadata.name, container.name])
+}
+
+deny contains msg if {
+  obj := input
+  obj.kind == "Deployment"
+  container := obj.spec.template.spec.containers[_]
+  not container.readinessProbe
+  msg := sprintf("Deployment/%s: container '%s' should define a readinessProbe", [obj.metadata.name, container.name])
+}

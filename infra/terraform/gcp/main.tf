@@ -1,0 +1,18 @@
+locals {
+  resource_prefix = "${var.project_name}-${var.environment}"
+  common_tags = merge(var.mandatory_tags, {
+    project     = var.project_name
+    environment = var.environment
+    managed_by  = "terraform"
+  })
+}
+
+module "gcp" {
+  source = "../modules/gcp"
+
+  name_prefix       = local.resource_prefix
+  region            = var.gcp_region
+  cidr_block        = var.cidr_block
+  subnet_cidr_block = var.subnet_cidr_block
+  labels            = local.common_tags
+}

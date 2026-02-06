@@ -1,0 +1,14 @@
+# Labels configuration for the repository
+# This file is used by the label-sync GitHub Action to create and maintain labels
+
+dependencies:
+  color: "0366d6"
+  description: "Pull requests that update a dependency file"
+
+terraform:
+  color: "844fba"
+  description: "Related to Terraform infrastructure code"
+
+github-actions:
+  color: "000000"
+  description: "Related to GitHub Actions workflows"

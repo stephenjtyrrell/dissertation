@@ -9,8 +9,7 @@ resource "google_compute_subnetwork" "this" {
   region        = var.region
   network       = google_compute_network.this.id
   
-  # Apply labels to subnetwork (networks don't support labels)
-  labels = var.labels
+  
 }
 
 # Note: GCP networks don't support labels directly, but subnetworks do

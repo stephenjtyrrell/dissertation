@@ -6,8 +6,8 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/REPLACE_ME/dissertation
-    targetRevision: HEAD
+    repoURL: https://github.com/stephenjtyrrell/dissertation.git
+    targetRevision: main
     path: k8s/app
   destination:
     server: https://kubernetes.default.svc

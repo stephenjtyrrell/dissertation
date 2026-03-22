@@ -1,10 +1,31 @@
 {
   "resource_changes": [
     {
-      "address": "aws_vpc.example",
+      "address": "module.aws.aws_vpc.this",
       "type": "aws_vpc",
+      "mode": "managed",
       "change": {
+        "actions": ["create"],
         "after": {
+          "tags": {
+            "owner": "platform-team",
+            "cost_center": "cc-001",
+            "compliance": "baseline",
+            "project": "dissertation-pipeline",
+            "environment": "dev",
+            "managed_by": "terraform"
+          }
+        }
+      }
+    },
+    {
+      "address": "module.aws.aws_flow_log.this",
+      "type": "aws_flow_log",
+      "mode": "managed",
+      "change": {
+        "actions": ["create"],
+        "after": {
+          "traffic_type": "ALL",
           "tags": {
             "owner": "platform-team",
             "cost_center": "cc-001",

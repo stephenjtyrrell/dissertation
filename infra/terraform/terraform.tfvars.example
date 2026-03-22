@@ -1,0 +1,38 @@
+# Example Terraform variables file
+# NOTE: With the cloud-specific directory structure, each cloud directory
+# should have its own terraform.tfvars file with only relevant variables.
+#
+# For AWS deployment: copy this to infra/terraform/aws/terraform.tfvars
+# For Azure deployment: copy this to infra/terraform/azure/terraform.tfvars
+# For GCP deployment: copy this to infra/terraform/gcp/terraform.tfvars
+#
+# Then customize the variables for your specific cloud provider.
+
+# Project configuration
+project_name = "dissertation-pipeline"
+environment  = "dev"
+
+# Network configuration
+cidr_block        = "10.42.0.0/16"
+subnet_cidr_block = "10.42.1.0/24"
+
+# Cloud-specific configurations (use only the ones relevant to your target cloud)
+# For AWS:
+aws_region   = "us-east-1"
+
+# For Azure:
+azure_location = "eastus"
+
+# For GCP:
+gcp_region     = "us-central1"
+gcp_project_id = "your-gcp-project-id"
+
+# Mandatory governance tags/labels
+mandatory_tags = {
+  owner       = "platform-team"
+  cost_center = "cc-001"
+  compliance  = "baseline"
+  project     = "dissertation-pipeline"
+  environment = "dev"
+  managed_by  = "terraform"
+}

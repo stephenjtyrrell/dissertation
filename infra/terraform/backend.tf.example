@@ -1,0 +1,49 @@
+# NOTE: Backend configuration is now defined in cloud-specific directories.
+#
+# This root-level backend.tf.example is intentionally kept as documentation only
+# to avoid confusion. Do NOT configure your Terraform backend here.
+#
+# Instead, configure backends in the appropriate cloud directory:
+#   - infra/terraform/aws/backend.tf.example
+#   - infra/terraform/azure/backend.tf.example
+#   - infra/terraform/gcp/backend.tf.example
+#
+# To use a backend:
+#   1. Choose the cloud directory you are deploying to (aws/, azure/, or gcp/).
+#   2. Copy the backend.tf.example file in that directory to backend.tf.
+#   3. Edit the copied backend.tf with your backend-specific settings
+#      (bucket, resource group, storage account, etc.).
+#
+# This file is intentionally left without any backend configuration blocks.
+# Refer to the cloud-specific backend.tf.example files for concrete examples.
+
+# Example backend configurations (for reference only):
+
+# AWS S3 backend
+# terraform {
+#   backend "s3" {
+#     bucket         = "your-terraform-state-bucket"
+#     key            = "dissertation/terraform.tfstate"
+#     region         = "us-east-1"
+#     encrypt        = true
+#     dynamodb_table = "terraform-state-lock"
+#   }
+# }
+
+# Azure Storage backend
+# terraform {
+#   backend "azurerm" {
+#     resource_group_name  = "terraform-state-rg"
+#     storage_account_name = "tfstatestorage"
+#     container_name       = "tfstate"
+#     key                  = "dissertation.terraform.tfstate"
+#   }
+# }
+
+# GCP Cloud Storage backend
+# terraform {
+#   backend "gcs" {
+#     bucket = "your-terraform-state-bucket"
+#     prefix = "dissertation"
+#   }
+# }

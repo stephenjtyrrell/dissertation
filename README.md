@@ -35,7 +35,8 @@ This repository provides a practical implementation for the dissertation topic:
 | OPA Policies | `policies/` | Governance policies for Terraform and Kubernetes |
 | CI/CD Pipeline | `.github/workflows/pipeline.yml` | GitHub Actions for IaC validation and policy checks |
 | Kubernetes App | `k8s/app/` | Production-ready workload with security best practices |
-| ArgoCD Manifest | `argocd/application.yaml` | GitOps delivery via Argo CD |
+| Kubernetes Test App | `k8s/test-app/` | Dedicated smoke-test workload for cluster validation |
+| ArgoCD Manifests | `argocd/*.yaml` | GitOps delivery for primary and test workloads |
 
 ---
 
@@ -210,7 +211,7 @@ opa eval --fail-defined --format pretty \
 **Kubernetes policies:**
 
 ```bash
-conftest test k8s/app -p policies/kubernetes
+conftest test k8s -p policies/kubernetes
 ```
 
 ---
@@ -220,9 +221,10 @@ conftest test k8s/app -p policies/kubernetes
 ```
 .
 ├── .github/                       # CI/CD workflows
-├── argocd/                        # ArgoCD application manifest
+├── argocd/                        # ArgoCD application manifests
 ├── infra/terraform/               # Multi-cloud Terraform IaC
-├── k8s/app/                       # Kubernetes manifests
+├── k8s/app/                       # Primary Kubernetes manifests
+├── k8s/test-app/                  # Test application manifests
 ├── policies/                      # OPA/Rego policies
 ├── .pre-commit-config.yaml        # Pre-commit hook configuration
 ├── LICENSE                        # MIT License
@@ -406,7 +408,7 @@ The sample application includes production-ready configurations:
 **Test locally:**
 
 ```bash
-conftest test k8s/app -p policies/kubernetes
+conftest test k8s -p policies/kubernetes
 ```
 
 ### Terraform Policies
@@ -585,27 +587,34 @@ kubectl port-forward svc/argocd-server -n argocd 8081:443
 
 ### Deploy the Application
 
-1. Confirm `argocd/application.yaml` points at your repository.
+1. Confirm both ArgoCD Application manifests point at your repository.
 
 ```yaml
 source:
   repoURL: https://github.com/stephenjtyrrell/dissertation.git
 ```
 
-2. Apply and wait for a healthy ArgoCD sync.
+2. Deploy the primary application and wait for a healthy ArgoCD sync.
 
 ```bash
 make argocd-test
 ```
 
-3. Verify.
+3. Deploy the dedicated test application and wait for health.
+
+```bash
+make argocd-test-app-sync
+```
+
+4. Verify both applications and workloads.
 
 ```bash
 kubectl get application -n argocd
 kubectl get all -n dissertation
+kubectl get all -n dissertation-test
 ```
 
-The ArgoCD application is configured with:
+The ArgoCD applications are configured with:
 
 - Automated sync with self-healing and pruning
 - Auto namespace creation (`CreateNamespace=true`)

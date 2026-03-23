@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dissertation-test-api
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/stephenjtyrrell/dissertation.git
+    targetRevision: main
+    path: k8s/test-app
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dissertation-test
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m

@@ -3,6 +3,9 @@ kind: Application
 metadata:
   name: dissertation-sample-api
   namespace: argocd
+  annotations:
+    # Link to source code and documentation
+    app.kubernetes.io/documentation: "https://github.com/YOUR_USERNAME/dissertation"
 spec:
   project: default
   source:

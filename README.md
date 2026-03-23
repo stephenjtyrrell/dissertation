@@ -210,6 +210,20 @@ opa eval --fail-defined --format pretty \
 
 **Kubernetes policies:**
 
+## CI/CD Pipeline
+
+The GitHub Actions workflow includes:
+- Multi-cloud matrix strategy (tests all three providers)
+- Terraform formatting, initialization, and validation
+- Policy evaluation for both Terraform and Kubernetes
+- Artifact upload for Terraform plans
+- Automated dependency updates via Dependabot
+
+## Troubleshooting
+
+### Terraform Issues
+
+**Problem: Provider authentication fails**
 ```bash
 conftest test k8s -p policies/kubernetes
 ```
@@ -407,6 +421,9 @@ The sample application includes production-ready configurations:
 
 **Test locally:**
 
+### Policy Issues
+
+**Problem: Policy evaluation fails**
 ```bash
 conftest test k8s -p policies/kubernetes
 ```

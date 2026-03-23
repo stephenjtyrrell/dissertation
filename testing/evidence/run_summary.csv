@@ -1,0 +1,10 @@
+run_id,test_id,timestamp_utc,commit_sha,app_target,outcome,duration_s,notes
+"GOV-02-RUN01-20260323-1722","GOV-02","2026-03-23T17:22:45Z","8e4934c859525e59545c763b8df539e7c5ce3e92","policy-fixture:missing-owner-plan.json","blocked","0","expected_rule=required_tags"
+"GOV-02-RUN02-20260323-1722","GOV-02","2026-03-23T17:22:45Z","8e4934c859525e59545c763b8df539e7c5ce3e92","policy-fixture:missing-cost-center-plan.json","blocked","0","expected_rule=required_tags"
+"GOV-02-RUN03-20260323-1722","GOV-02","2026-03-23T17:22:45Z","8e4934c859525e59545c763b8df539e7c5ce3e92","policy-fixture:missing-environment-plan.json","blocked","0","expected_rule=required_tags"
+"GOV-03-RUN01-20260323-1722","GOV-03","2026-03-23T17:22:45Z","8e4934c859525e59545c763b8df539e7c5ce3e92","policy-fixture:public-storage-plan.json","blocked","0","expected_rule=public_access"
+"GOV-03-RUN02-20260323-1722","GOV-03","2026-03-23T17:22:45Z","8e4934c859525e59545c763b8df539e7c5ce3e92","policy-fixture:unencrypted-s3-plan.json","blocked","0","expected_rule=server_side_encryption"
+"GOV-03-RUN03-20260323-1722","GOV-03","2026-03-23T17:22:45Z","8e4934c859525e59545c763b8df539e7c5ce3e92","policy-fixture:unrestricted-ingress-plan.json","blocked","0","expected_rule=unrestricted_ingress"
+"GOV-04-RUN01-20260323-1722","GOV-04","2026-03-23T17:22:45Z","8e4934c859525e59545c763b8df539e7c5ce3e92","policy-fixture:missing-labels.yaml","blocked","0","expected_rule=required_labels"
+"GOV-04-RUN02-20260323-1722","GOV-04","2026-03-23T17:22:45Z","8e4934c859525e59545c763b8df539e7c5ce3e92","policy-fixture:missing-resources.yaml","blocked","0","expected_rule=resource_requests_limits"
+"GOV-04-RUN03-20260323-1722","GOV-04","2026-03-23T17:22:45Z","8e4934c859525e59545c763b8df539e7c5ce3e92","policy-fixture:privileged-container.yaml","blocked","0","expected_rule=security_context"

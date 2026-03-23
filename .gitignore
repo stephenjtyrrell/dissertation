@@ -38,9 +38,12 @@ Thumbs.db
 .env.local
 *.pem
 *.key
+testing/config.env
 
 # CI/CD
 .github/workflows/*.log
+testing/evidence/bundles/
+testing/reports/generated/
 
 # Unwanted files
 CONTRIBUTING.md

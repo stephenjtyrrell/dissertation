@@ -1,0 +1,30 @@
+{
+  "resource_changes": [
+    {
+      "address": "module.gcp.google_compute_firewall.this",
+      "type": "google_compute_firewall",
+      "mode": "managed",
+      "change": {
+        "actions": ["create"],
+        "after": {
+          "direction": "INGRESS",
+          "source_ranges": ["0.0.0.0/0"],
+          "allow": [
+            {
+              "protocol": "tcp",
+              "ports": ["80", "443"]
+            }
+          ],
+          "labels": {
+            "owner": "platform-team",
+            "cost_center": "cc-001",
+            "compliance": "baseline",
+            "project": "dissertation-pipeline",
+            "environment": "dev",
+            "managed_by": "terraform"
+          }
+        }
+      }
+    }
+  ]
+}

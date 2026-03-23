@@ -1,0 +1,10 @@
+run_id,stage,policy_rule,resource,violation_count,blocked
+"GOV-02-RUN01-20260323-1722","terraform-policy","required_tags","module.aws.aws_vpc.this","1","true"
+"GOV-02-RUN02-20260323-1722","terraform-policy","required_tags","module.aws.aws_flow_log.this","1","true"
+"GOV-02-RUN03-20260323-1722","terraform-policy","required_tags","module.aws.aws_vpc.this","1","true"
+"GOV-03-RUN01-20260323-1722","terraform-policy","public_access","module.aws.aws_s3_bucket.this","1","true"
+"GOV-03-RUN02-20260323-1722","terraform-policy","server_side_encryption","module.aws.aws_s3_bucket.this","1","true"
+"GOV-03-RUN03-20260323-1722","terraform-policy","unrestricted_ingress","module.gcp.google_compute_firewall.this","1","true"
+"GOV-04-RUN01-20260323-1722","kubernetes-policy","required_labels","Deployment/missing-labels-api","1","true"
+"GOV-04-RUN02-20260323-1722","kubernetes-policy","resource_requests_limits","Deployment/missing-resources-api","2","true"
+"GOV-04-RUN03-20260323-1722","kubernetes-policy","security_context","Deployment/privileged-api","2","true"

@@ -5,7 +5,7 @@ import future.keywords.if
 
 required_labels := {"app.kubernetes.io/name", "app.kubernetes.io/part-of", "owner", "compliance"}
 
-deny[msg] {
+deny contains msg if {
   obj := input
   kind := object.get(obj, "kind", "")
   kind != ""

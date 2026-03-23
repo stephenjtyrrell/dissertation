@@ -42,7 +42,7 @@ policy-k8s: ## Evaluate Kubernetes policies
 	conftest test k8s -p $(POLICY_K8S_DIR)
 
 k8s-dry-run: ## Validate Kubernetes manifests with kubectl client-side dry run
-	kubectl create --dry-run=client --validate=false -f k8s
+	kubectl apply --dry-run=client -f k8s
 
 argocd-apply: ## Apply ArgoCD Application manifest
 	kubectl apply -f $(ARGOCD_APP_MANIFEST)

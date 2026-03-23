@@ -1,6 +1,7 @@
 package main
 
-import rego.v1
+import future.keywords.contains
+import future.keywords.if
 
 required_labels := {"app.kubernetes.io/name", "app.kubernetes.io/part-of", "owner", "compliance"}
 

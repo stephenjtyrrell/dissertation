@@ -1,5 +1,8 @@
 package terraform
 
+import future.keywords.contains
+import future.keywords.if
+
 required_tags := {"owner", "cost_center", "compliance", "project", "environment", "managed_by"}
 
 # Resource types that do not support tags/labels

@@ -107,7 +107,7 @@ jobs:
         run: conftest test k8s -p policies/kubernetes
 
       - name: Upload Terraform plan artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: terraform-plan-${{ matrix.cloud }}

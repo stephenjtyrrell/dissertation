@@ -1,13 +1,3 @@
-variable "cloud" {
-  description = "Target cloud provider: aws, azure, gcp"
-  type        = string
-
-  validation {
-    condition     = contains(["aws", "azure", "gcp"], var.cloud)
-    error_message = "cloud must be one of: aws, azure, gcp"
-  }
-}
-
 variable "project_name" {
   description = "Logical project/application name"
   type        = string
@@ -21,7 +11,7 @@ variable "environment" {
 }
 
 variable "cidr_block" {
-  description = "VPC/VNet network CIDR"
+  description = "VPC network CIDR"
   type        = string
   default     = "10.42.0.0/16"
 }
@@ -30,18 +20,6 @@ variable "subnet_cidr_block" {
   description = "Subnet CIDR"
   type        = string
   default     = "10.42.1.0/24"
-}
-
-variable "aws_region" {
-  description = "AWS region"
-  type        = string
-  default     = "us-east-1"
-}
-
-variable "azure_location" {
-  description = "Azure location"
-  type        = string
-  default     = "eastus"
 }
 
 variable "gcp_region" {

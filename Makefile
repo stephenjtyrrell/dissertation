@@ -1,14 +1,32 @@
 TF_DIR=infra/terraform
 POLICY_TF_DIR=policies/terraform
 POLICY_K8S_DIR=policies/kubernetes
+TESTING_DIR=testing
+TESTING_CONFIG?=$(TESTING_DIR)/config.env
 CLOUD?=aws
 ARGOCD_NAMESPACE?=argocd
 ARGOCD_APP_NAME?=dissertation-sample-api
 ARGOCD_APP_MANIFEST?=argocd/application.yaml
 ARGOCD_TEST_APP_NAME?=dissertation-test-api
 ARGOCD_TEST_APP_MANIFEST?=argocd/test-application.yaml
+TEST_ID?=
+RUN_SEQ?=1
+GH_RUN_ID?=
+PR_NUMBER?=
+APP_NAME?=$(ARGOCD_APP_NAME)
+APP_NAMESPACE?=
+APP_TARGET?=manual
+OUTCOME?=
+DURATION_S?=
+NOTES?=
+RUN_ID?=
+STAGE?=
+POLICY_RULE?=
+RESOURCE?=
+VIOLATION_COUNT?=
+BLOCKED?=
 
-.PHONY: help tf-init tf-fmt tf-validate tf-plan tf-apply tf-destroy policy-tf policy-k8s k8s-dry-run argocd-apply argocd-status argocd-test argocd-test-app-apply argocd-test-app-status argocd-test-app-sync clean all
+.PHONY: help tf-init tf-fmt tf-validate tf-plan tf-apply tf-destroy policy-tf policy-k8s k8s-dry-run argocd-apply argocd-status argocd-test argocd-test-app-apply argocd-test-app-status argocd-test-app-sync testing-init testing-record-run testing-record-policy testing-policy-negatives testing-capture-ci testing-capture-pr testing-capture-argocd testing-analyze clean all
 
 help: ## Display this help message
 	@echo "Available targets:"
@@ -69,6 +87,30 @@ argocd-test-app-sync: ## Apply test app and wait until ArgoCD reports Synced + H
 	kubectl wait --for=jsonpath='{.status.health.status}'=Healthy application/$(ARGOCD_TEST_APP_NAME) -n $(ARGOCD_NAMESPACE) --timeout=300s
 	kubectl get application -n $(ARGOCD_NAMESPACE) $(ARGOCD_TEST_APP_NAME)
 	kubectl get all -n dissertation-test
+
+testing-init: ## Create dissertation testing evidence layout and CSV headers
+	@TESTING_CONFIG=$(TESTING_CONFIG) scripts/testing/init_evidence.sh
+
+testing-record-run: ## Append a manual run_summary row
+	@TESTING_CONFIG=$(TESTING_CONFIG) RUN_ID=$(RUN_ID) scripts/testing/record_run.sh "$(TEST_ID)" "$(RUN_SEQ)" "$(APP_TARGET)" "$(OUTCOME)" "$(DURATION_S)" "$(NOTES)"
+
+testing-record-policy: ## Append a manual policy_events row
+	@TESTING_CONFIG=$(TESTING_CONFIG) RUN_ID=$(RUN_ID) scripts/testing/record_policy_event.sh "$(TEST_ID)" "$(RUN_SEQ)" "$(STAGE)" "$(POLICY_RULE)" "$(RESOURCE)" "$(VIOLATION_COUNT)" "$(BLOCKED)"
+
+testing-policy-negatives: ## Execute local negative-control fixtures for GOV-02, GOV-03 and GOV-04
+	@TESTING_CONFIG=$(TESTING_CONFIG) scripts/testing/run_policy_negative_controls.sh
+
+testing-capture-ci: ## Capture GitHub Actions evidence for a workflow run (requires gh auth)
+	@TESTING_CONFIG=$(TESTING_CONFIG) RUN_ID=$(RUN_ID) scripts/testing/capture_ci_run.sh "$(TEST_ID)" "$(RUN_SEQ)" "$(GH_RUN_ID)" "$(APP_TARGET)"
+
+testing-capture-pr: ## Capture PR approval/audit evidence (requires gh auth)
+	@TESTING_CONFIG=$(TESTING_CONFIG) RUN_ID=$(RUN_ID) scripts/testing/capture_pr_audit.sh "$(TEST_ID)" "$(RUN_SEQ)" "$(PR_NUMBER)" "$(GH_RUN_ID)"
+
+testing-capture-argocd: ## Capture ArgoCD and Kubernetes evidence for a live app
+	@TESTING_CONFIG=$(TESTING_CONFIG) RUN_ID=$(RUN_ID) scripts/testing/capture_argocd_snapshot.sh "$(TEST_ID)" "$(RUN_SEQ)" "$(APP_NAME)" "$(APP_NAMESPACE)" "$(OUTCOME)"
+
+testing-analyze: ## Build markdown summary statistics from collected evidence
+	@python3 scripts/testing/analyze_results.py
 
 clean: ## Clean generated files
 	rm -f $(TF_DIR)/aws/*.tfplan $(TF_DIR)/aws/tfplan $(TF_DIR)/aws/tfplan*.json $(TF_DIR)/azure/*.tfplan $(TF_DIR)/azure/tfplan $(TF_DIR)/azure/tfplan*.json $(TF_DIR)/gcp/*.tfplan $(TF_DIR)/gcp/tfplan $(TF_DIR)/gcp/tfplan*.json

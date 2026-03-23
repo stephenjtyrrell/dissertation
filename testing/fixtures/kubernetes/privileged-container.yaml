@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: privileged-api
+  labels:
+    app.kubernetes.io/name: privileged-api
+    app.kubernetes.io/part-of: dissertation-platform
+    owner: platform-team
+    compliance: baseline
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: privileged-api
+  template:
+    metadata:
+      labels:
+        app: privileged-api
+    spec:
+      containers:
+        - name: app
+          image: nginx:1.27
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+          securityContext:
+            privileged: true
+            allowPrivilegeEscalation: true
+            readOnlyRootFilesystem: false

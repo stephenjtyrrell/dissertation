@@ -1,0 +1,30 @@
+{
+  "resource_changes": [
+    {
+      "address": "module.aws.aws_s3_bucket.this",
+      "type": "aws_s3_bucket",
+      "mode": "managed",
+      "change": {
+        "actions": ["create"],
+        "after": {
+          "public_access": true,
+          "server_side_encryption_configuration": {
+            "rule": {
+              "apply_server_side_encryption_by_default": {
+                "sse_algorithm": "AES256"
+              }
+            }
+          },
+          "tags": {
+            "owner": "platform-team",
+            "cost_center": "cc-001",
+            "compliance": "baseline",
+            "project": "dissertation-pipeline",
+            "environment": "dev",
+            "managed_by": "terraform"
+          }
+        }
+      }
+    }
+  ]
+}

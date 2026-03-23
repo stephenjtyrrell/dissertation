@@ -1,0 +1,23 @@
+{
+  "resource_changes": [
+    {
+      "address": "module.aws.aws_s3_bucket.this",
+      "type": "aws_s3_bucket",
+      "mode": "managed",
+      "change": {
+        "actions": ["create"],
+        "after": {
+          "public_access": false,
+          "tags": {
+            "owner": "platform-team",
+            "cost_center": "cc-001",
+            "compliance": "baseline",
+            "project": "dissertation-pipeline",
+            "environment": "dev",
+            "managed_by": "terraform"
+          }
+        }
+      }
+    }
+  ]
+}

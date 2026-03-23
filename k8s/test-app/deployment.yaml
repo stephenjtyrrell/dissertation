@@ -8,7 +8,7 @@ metadata:
     owner: platform-team
     compliance: baseline
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: smoke-api

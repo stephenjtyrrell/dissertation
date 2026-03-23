@@ -1,4 +1,7 @@
-package kubernetes
+package main
+
+import future.keywords.contains
+import future.keywords.if
 
 required_labels := {"app.kubernetes.io/name", "app.kubernetes.io/part-of", "owner", "compliance"}
 
@@ -14,7 +17,7 @@ deny[msg] {
 }
 
 # Check for resource limits on containers
-deny[msg] {
+deny contains msg if {
   obj := input
   obj.kind == "Deployment"
   container := obj.spec.template.spec.containers[_]
@@ -22,7 +25,7 @@ deny[msg] {
   msg := sprintf("Deployment/%s: container '%s' must define resource limits", [obj.metadata.name, container.name])
 }
 
-deny[msg] {
+deny contains msg if {
   obj := input
   obj.kind == "Deployment"
   container := obj.spec.template.spec.containers[_]
@@ -31,7 +34,7 @@ deny[msg] {
 }
 
 # Check for security context
-deny[msg] {
+deny contains msg if {
   obj := input
   obj.kind == "Deployment"
   container := obj.spec.template.spec.containers[_]
@@ -39,7 +42,7 @@ deny[msg] {
   msg := sprintf("Deployment/%s: container '%s' must define securityContext", [obj.metadata.name, container.name])
 }
 
-deny[msg] {
+deny contains msg if {
   obj := input
   obj.kind == "Deployment"
   container := obj.spec.template.spec.containers[_]
@@ -47,7 +50,7 @@ deny[msg] {
   msg := sprintf("Deployment/%s: container '%s' must not run in privileged mode", [obj.metadata.name, container.name])
 }
 
-deny[msg] {
+deny contains msg if {
   obj := input
   obj.kind == "Deployment"
   container := obj.spec.template.spec.containers[_]
@@ -58,7 +61,7 @@ deny[msg] {
 }
 
 # Check for liveness and readiness probes
-deny[msg] {
+deny contains msg if {
   obj := input
   obj.kind == "Deployment"
   container := obj.spec.template.spec.containers[_]
@@ -66,7 +69,7 @@ deny[msg] {
   msg := sprintf("Deployment/%s: container '%s' should define a livenessProbe", [obj.metadata.name, container.name])
 }
 
-deny[msg] {
+deny contains msg if {
   obj := input
   obj.kind == "Deployment"
   container := obj.spec.template.spec.containers[_]

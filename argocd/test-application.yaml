@@ -1,20 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: dissertation-sample-api
+  name: dissertation-test-api
   namespace: argocd
-  annotations:
-    # Link to source code and documentation
-    app.kubernetes.io/documentation: "https://github.com/YOUR_USERNAME/dissertation"
 spec:
   project: default
   source:
     repoURL: https://github.com/stephenjtyrrell/dissertation.git
     targetRevision: main
-    path: k8s/app
+    path: k8s/test-app
   destination:
     server: https://kubernetes.default.svc
-    namespace: dissertation
+    namespace: dissertation-test
   syncPolicy:
     automated:
       prune: true

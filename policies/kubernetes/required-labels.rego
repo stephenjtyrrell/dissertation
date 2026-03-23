@@ -57,7 +57,7 @@ deny contains msg if {
   sc := object.get(container, "securityContext", {})
   readOnly := object.get(sc, "readOnlyRootFilesystem", false)
   readOnly != true
-  msg := sprintf("Deployment/%s: container '%s' should use read-only root filesystem", [obj.metadata.name, container.name])
+  msg := sprintf("Deployment/%s: container '%s' must use read-only root filesystem", [obj.metadata.name, container.name])
 }
 
 # Check for liveness and readiness probes
@@ -66,7 +66,7 @@ deny contains msg if {
   obj.kind == "Deployment"
   container := obj.spec.template.spec.containers[_]
   not container.livenessProbe
-  msg := sprintf("Deployment/%s: container '%s' should define a livenessProbe", [obj.metadata.name, container.name])
+  msg := sprintf("Deployment/%s: container '%s' must define a livenessProbe", [obj.metadata.name, container.name])
 }
 
 deny contains msg if {
@@ -74,5 +74,5 @@ deny contains msg if {
   obj.kind == "Deployment"
   container := obj.spec.template.spec.containers[_]
   not container.readinessProbe
-  msg := sprintf("Deployment/%s: container '%s' should define a readinessProbe", [obj.metadata.name, container.name])
+  msg := sprintf("Deployment/%s: container '%s' must define a readinessProbe", [obj.metadata.name, container.name])
 }

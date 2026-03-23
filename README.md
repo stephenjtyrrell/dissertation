@@ -225,7 +225,14 @@ The GitHub Actions workflow includes:
 
 **Problem: Provider authentication fails**
 ```bash
-conftest test k8s -p policies/kubernetes
+# AWS: verify identity
+aws sts get-caller-identity
+
+# Azure: show current account
+az account show
+
+# GCP: list active accounts
+gcloud auth list
 ```
 
 ---
